@@ -2,6 +2,8 @@ import HomeIcon from "../assets/icons/home.svg";
 import UsersIcon from "../assets/icons/users.svg";
 import FolderIcon from "../assets/icons/folders.svg";
 import HealthIcon from "../assets/icons/health-shield.svg";
+import HealthShieldIcon from "../assets/icons/health-shield.svg";
+
 interface SubmenuType {
   path: string;
   name: string;
@@ -44,6 +46,11 @@ const routes: RouteType[] = [
     path: "/fasility",
     icon: <img src={HealthIcon} alt="logo" />,
     name: "Fasilitas Kesehatan",
+  },
+  {
+    path: "/health-info",
+    icon: <img src={HealthShieldIcon} alt="logo" />,
+    name: "Info Kesehatan",
   },
 ];
 

@@ -2594,6 +2594,13 @@
     jest-matcher-utils "^27.0.0"
     pretty-format "^27.0.0"
 
+"@types/jquery@*":
+  version "3.5.29"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.29.tgz#3c06a1f519cd5fc3a7a108971436c00685b5dcea"
+  integrity sha512-oXQQC9X9MOPRrMhPHHOsXqeQDnWeCDT3PelUIg/Oy8FAbzSZtFHRjc7IpbfFVmpLtJ+UOoywpRsuO5Jxjybyeg==
+  dependencies:
+    "@types/sizzle" "*"
+
 "@types/json-schema@*", "@types/json-schema@^7.0.4", "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
   version "7.0.15"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
@@ -2732,6 +2739,11 @@
     "@types/mime" "*"
     "@types/node" "*"
 
+"@types/sizzle@*":
+  version "2.3.8"
+  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.8.tgz#518609aefb797da19bf222feb199e8f653ff7627"
+  integrity sha512-0vWLNK2D5MT9dg0iOo8GlKguPAU02QjmZitPEsXRuJXU/OGIOt9vT9Fc26wtYuavLxtO45v9PGleoL9Z0k1LHg==
+
 "@types/sockjs@^0.3.33":
   version "0.3.36"
   resolved "https://registry.yarnpkg.com/@types/sockjs/-/sockjs-0.3.36.tgz#ce322cf07bcc119d4cbf7f88954f3a3bd0f67535"
@@ -2743,6 +2755,13 @@
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.3.tgz#6209321eb2c1712a7e7466422b8cb1fc0d9dd5d8"
   integrity sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==
+
+"@types/summernote@^0.8.10":
+  version "0.8.10"
+  resolved "https://registry.yarnpkg.com/@types/summernote/-/summernote-0.8.10.tgz#38ba84209246154ef7aee26521888ec84cf7c3f8"
+  integrity sha512-Lua5hLc0+WIBlPRUcWIL4Dcn9aAxYU67bxGqD2enq6qMEHqdnSMgH+7VJKprByeNn4W1Xm+E6ODRmzY3EBIjgQ==
+  dependencies:
+    "@types/jquery" "*"
 
 "@types/testing-library__jest-dom@^5.9.1":
   version "5.14.9"
@@ -3340,6 +3359,11 @@ at-least-node@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/at-least-node/-/at-least-node-1.0.0.tgz#602cd4b46e844ad4effc92a8011a3c46e0238dc2"
   integrity sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==
+
+autobind-decorator@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/autobind-decorator/-/autobind-decorator-2.4.0.tgz#ea9e1c98708cf3b5b356f7cf9f10f265ff18239c"
+  integrity sha512-OGYhWUO72V6DafbF8PM8rm3EPbfuyMZcJhtm5/n26IDwO18pohE4eNazLoCGhPiXOCD0gEGmrbU3849QvM8bbw==
 
 autoprefixer@^10.4.13:
   version "10.4.16"
@@ -6752,6 +6776,20 @@ jiti@^1.19.1:
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.21.0.tgz#7c97f8fe045724e136a397f7340475244156105d"
   integrity sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==
 
+jodit-react@^4.0.9:
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/jodit-react/-/jodit-react-4.0.9.tgz#751c3c71ac5f308be64f90f129c3adeb0b8a9cbd"
+  integrity sha512-+Hlj8OMjyztMxtb5pukA+XquTJDsH+4UEm8QQvfmkLoxERB2kkoFyFXFL4E01AkWL0T+U0oL9+FqTxEi5N95pQ==
+  dependencies:
+    jodit "^4.0.6"
+
+jodit@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/jodit/-/jodit-4.0.6.tgz#768577c612bbb828651f3edba91e286f253d44ca"
+  integrity sha512-UyWSwQyGhim30mmWo2GH5HKjSsQN5KdhEebajKun08PPKaglDJi7cTXOa5hEUKAgl1PLUsMVKrBWFZdRzcuG6A==
+  dependencies:
+    autobind-decorator "^2.4.0"
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -8498,6 +8536,11 @@ react-error-overlay@^6.0.11:
   version "6.0.11"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.11.tgz#92835de5841c5cf08ba00ddd2d677b6d17ff9adb"
   integrity sha512-/6UZ2qgEyH2aqzYZgQPxEnz33NJ2gNsnHA2o5+o4wW9bLM/JYQitNP9xPhsXwC08hMMovfGe/8retsdDsczPRg==
+
+react-image-picker@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-image-picker/-/react-image-picker-1.1.1.tgz#40315c85c3fd24e463902e177f116db5581531ae"
+  integrity sha512-pFYUhI2w3x1OO1DR/rRJwICFGD0z0VYSoIU0bFSkooZdctw+PFYBbwslyoMpEpQyoJ0ulvG+NURp3niXCafgyQ==
 
 react-is@^16.13.1, react-is@^16.3.2:
   version "16.13.1"

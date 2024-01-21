@@ -39,3 +39,7 @@ export {
     default as HealthPage
 }
 from "./health/health"
+export {
+    default as HealthInfoPage
+}
+from "./health-info/health-info"

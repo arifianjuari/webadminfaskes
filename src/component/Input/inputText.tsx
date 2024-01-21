@@ -8,6 +8,7 @@ interface InputTextProps {
   defaultValue?: string;
   placeholder?: string;
   readonly?: boolean;
+  errorMessage?: string;
   updateFormValue: (arg: { updateType: string; value: string }) => void;
   updateType: string;
 }
@@ -22,6 +23,7 @@ const InputText: React.FC<InputTextProps> = ({
   updateFormValue,
   updateType,
   readonly,
+  errorMessage,
 }) => {
   const [value, setValue] = useState<string | undefined>(defaultValue);
 
@@ -51,6 +53,11 @@ const InputText: React.FC<InputTextProps> = ({
         }
         className="form-control form-control-lg"
       />
+      {errorMessage && errorMessage.includes(value!) ? (
+        <label className="label">
+          <span className="invalid-feedback">{errorMessage}</span>
+        </label>
+      ) : null}
     </div>
   );
 };

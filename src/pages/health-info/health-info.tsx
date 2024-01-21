@@ -3,22 +3,24 @@ import React, { useEffect, useState } from "react";
 import MainLayout from "../../component/Layouts/MainLayout";
 import { db } from "../../firebase";
 import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
-import FaskesData from "../../interface/fasker_interface";
 import EditModal from "./modal_edit";
-import AddModal from "./modal_add";
 import ShowModal from "./modal_show";
 import { Modal } from "react-bootstrap";
 import ApproveModal from "../../component/Modal/CustomModalConfirmation";
 import showToast from "../../component/Toast/toast";
+import HealthInfoData from "../../interface/health_info_interface";
+import AddModalHealthInfo from "./modal_adds";
 
-const FacilityHealth: React.FC = () => {
+const HealthInfo: React.FC = () => {
   const [id, setId] = useState("");
-  const [faskesData, setFaskesData] = useState<FaskesData[]>([]);
-  const [faskesFilterData, setFaskesFilterData] = useState<FaskesData[]>([]);
+  const [healthInfoData, setHealthInfoData] = useState<HealthInfoData[]>([]);
+  const [healFilterData, setHealthInfoFilterData] = useState<HealthInfoData[]>(
+    []
+  );
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-  const [editItemId, setEditItemId] = useState<FaskesData | null>(null);
+  const [editItemId, setEditItemId] = useState<HealthInfoData | null>(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
 
   const handleShowDelete = (id: string) => {
@@ -33,7 +35,7 @@ const FacilityHealth: React.FC = () => {
 
   const onSubmitApprove = async () => {
     try {
-      const faskesDocRef = doc(db, "faskes", id);
+      const faskesDocRef = doc(db, "healthInfo", id);
       await deleteDoc(faskesDocRef);
       setShowApproveModal(false);
       showToast("Data berhasil dihapus");
@@ -42,12 +44,12 @@ const FacilityHealth: React.FC = () => {
       console.error("Error deleting document:");
     }
   };
-  const handleEditClick = async (itemId: FaskesData) => {
+  const handleEditClick = async (itemId: HealthInfoData) => {
     setEditItemId(itemId);
     setShowEditModal(true);
   };
 
-  const handleViewClick = (data: FaskesData) => {
+  const handleViewClick = (data: HealthInfoData) => {
     setEditItemId(data);
     setShowViewModal(true);
   };
@@ -63,29 +65,27 @@ const FacilityHealth: React.FC = () => {
     const fetchData = async () => {
       try {
         // Reference to the "faskes" collection in Firestore
-        const faskesCollection = collection(db, "faskes");
+        const faskesCollection = collection(db, "healthInfo");
 
         // Listen for changes in the "faskes" collection
         const unsubscribe = onSnapshot(faskesCollection, (snapshot) => {
-          const faskes: FaskesData[] = snapshot.docs.map((doc) => {
+          const healthInfo: HealthInfoData[] = snapshot.docs.map((doc) => {
             const data = doc.data();
 
             return {
-              id: doc.id,
-              alamat_faskes: data.alamat_faskes,
-              created_at: data.created_at, // Assuming Unix timestamp in seconds
-              deskripsi_faskes: data.deskripsi_faskes,
-              foto_faskes: data.foto_faskes,
-              kategori_faskes: data.kategori_faskes,
-              latitude: data.latitude,
-              longitude: data.longitude,
-              nama_faskes: data.nama_faskes,
-              nama_petugas: data.nama_petugas,
-              nomor_whatsapp_faskes: data.nomor_whatsapp_faskes,
+              deskripsi: data.deskripsi,
+              foto: data.foto,
+              id: data.id,
+              institusi: data.institusi,
+              judul: data.judul,
+              penulis: data.penulis,
+              publisher_user_id: data.publisher_user_id,
+              tanggal_dibuat: data.tanggal_dibuat,
+              waktu_dibuat: data.waktu_dibuat,
             };
           });
-          setFaskesData(faskes);
-          setFaskesFilterData(faskes);
+          setHealthInfoData(healthInfo);
+          setHealthInfoFilterData(healthInfo);
         });
 
         // Cleanup function to unsubscribe when the component unmounts
@@ -102,12 +102,12 @@ const FacilityHealth: React.FC = () => {
 
   const SearchUser = (name: string) => {
     if (name !== "") {
-      const filterFaskes = faskesData.filter((user) =>
-        user.nama_faskes.toLowerCase().includes(name.toLowerCase())
+      const filterFaskes = healthInfoData.filter((item) =>
+        item.judul.toLowerCase().includes(name.toLowerCase())
       );
-      setFaskesData(filterFaskes);
+      setHealthInfoData(filterFaskes);
     } else {
-      setFaskesData(faskesFilterData);
+      setHealthInfoData(healFilterData);
     }
   };
   return (
@@ -134,43 +134,45 @@ const FacilityHealth: React.FC = () => {
                   </button>
                 </div>
               </div>
-              {faskesData.length > 0 ? (
+              {healthInfoData.length > 0 ? (
                 <div className="table-responsive">
                   <table className="table datatables">
                     <thead>
                       <tr>
                         <th>#</th>
-                        <th>Fasilitas Kesehatan</th>
-                        <th>Kategori</th>
-                        <th>Alamat</th>
-                        <th>Nomor WhatsApp</th>
+                        <th>Tanggal Rilis</th>
+                        <th>Judul</th>
+                        <th>Isi</th>
+                        <th>Penulis</th>
+                        {/* <th>Status</th> */}
                         <th className="text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {faskesData.map((user, index) => (
+                      {healthInfoData.map((item, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
-                          <td>{user.nama_faskes}</td>
-                          <td>{user.kategori_faskes}</td>
-                          <td>{user.alamat_faskes}</td>
-                          <td>{user.nomor_whatsapp_faskes}</td>
+                          <td>{`${item.tanggal_dibuat} ${item.waktu_dibuat}`}</td>
+                          <td>{item.judul}</td>
+                          <td>{item.deskripsi}</td>
+                          <td>{item.penulis}</td>
+                          {/* <td>{item.}</td> */}
                           <td>
                             <button
                               className="btn-outline-primary mr-2 font-weight-bold"
-                              onClick={() => handleViewClick(user)}
+                              onClick={() => handleViewClick(item)}
                             >
                               Lihat Data
                             </button>
                             <button
                               className="btn-outline-success mr-2 font-weight-bold"
-                              onClick={() => handleEditClick(user)}
+                              onClick={() => handleEditClick(item)}
                             >
                               Sunting
                             </button>
                             <button
                               className="btn-outline-danger font-weight-bold"
-                              onClick={() => handleShowDelete(user.id)}
+                              onClick={() => handleShowDelete(item.id)}
                             >
                               Hapus
                             </button>
@@ -194,11 +196,7 @@ const FacilityHealth: React.FC = () => {
             <h3>Tambah Fasilitas Kesehatan</h3>
           </Modal.Title>
         </Modal.Header>
-        <AddModal
-          show={showAddModal}
-          onHide={handleEditModalClose}
-          faskedData={editItemId!}
-        />
+        <AddModalHealthInfo show={showAddModal} onHide={handleEditModalClose} />
       </Modal>
       <Modal
         className="edit"
@@ -210,11 +208,11 @@ const FacilityHealth: React.FC = () => {
             <h3>Sunting Data</h3>
           </Modal.Title>
         </Modal.Header>
-        <EditModal
+        {/* <EditModal
           show={showEditModal}
           onHide={handleEditModalClose}
           faskedData={editItemId!}
-        />
+        /> */}
       </Modal>
       <Modal
         className="edit"
@@ -226,11 +224,11 @@ const FacilityHealth: React.FC = () => {
             <h3>Fasilitas Kesehatan</h3>
           </Modal.Title>
         </Modal.Header>
-        <ShowModal
+        {/* <ShowModal
           show={showViewModal}
           onHide={handleEditModalClose}
           faskedData={editItemId!}
-        />
+        /> */}
       </Modal>
       <ApproveModal
         show={showApproveModal}
@@ -243,4 +241,4 @@ const FacilityHealth: React.FC = () => {
   );
 };
 
-export default FacilityHealth;
+export default HealthInfo;

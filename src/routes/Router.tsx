@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import {
   DashboardPage,
   FacilityPage,
+  HealthInfoPage,
   HealthPage,
   Login,
   NotFoundPage,
@@ -23,6 +24,7 @@ const Router = () => {
         </Route>
         <Route path="/report-health" element={<HealthPage />} />
         <Route path="/fasility" element={<FacilityPage />} />
+        <Route path="/health-info" element={<HealthInfoPage />} />
       </Route>
     </Routes>
   );
