@@ -7,9 +7,10 @@ import FaskesData from "../../interface/fasker_interface";
 import EditModal from "./modal_edit";
 import AddModal from "./modal_add";
 import ShowModal from "./modal_show";
-import { Modal } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import ApproveModal from "../../component/Modal/CustomModalConfirmation";
 import showToast from "../../component/Toast/toast";
+import ImportFaskesModal from "../../component/Modal/ImportFaskesModal";
 
 const FacilityHealth: React.FC = () => {
   const [id, setId] = useState("");
@@ -20,6 +21,14 @@ const FacilityHealth: React.FC = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [editItemId, setEditItemId] = useState<FaskesData | null>(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showModalImport, setShowModalImport] = useState(false);
+
+  const handleShowModalImport = () => {
+    setShowModalImport(true);
+  };
+  const handleCloseModalImport = () => {
+    setShowModalImport(false);
+  };
 
   const handleShowDelete = (id: string) => {
     setId(id);
@@ -125,7 +134,14 @@ const FacilityHealth: React.FC = () => {
                   placeholder="Search by name..."
                   onChange={(e) => SearchUser(e.target.value)}
                 />
-                <div className="float-right">
+                <div className="row float-right">
+                  <Button
+                    variant="success"
+                    className="bg-success mr-2"
+                    onClick={handleShowModalImport}
+                  >
+                    Import Excel
+                  </Button>
                   <button
                     className="btn btn-primary btn-icon-text"
                     onClick={() => setShowAddModal(true)}
@@ -187,7 +203,10 @@ const FacilityHealth: React.FC = () => {
           </div>
         </div>
       </div>
-
+      <ImportFaskesModal
+        show={showModalImport}
+        onClose={handleCloseModalImport}
+      />
       <Modal className="add" show={showAddModal} onHide={handleEditModalClose}>
         <Modal.Header closeButton>
           <Modal.Title className="text-center">

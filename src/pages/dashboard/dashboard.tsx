@@ -3,7 +3,7 @@ import MainLayout from "../../component/Layouts/MainLayout";
 
 const Dashboard: React.FC = () => {
   return (
-    <MainLayout title="Dashboard/">
+    <MainLayout title="Dashboard">
       <div className="row">
         <div className="col-md-12 grid-margin">
           <div className="card">

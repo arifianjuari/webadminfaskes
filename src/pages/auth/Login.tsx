@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import showToast from "../../component/Toast/toast";
+import User from "../../interface/auth_interface";
 
 interface LoginProps {}
 
@@ -33,7 +34,14 @@ const Login: React.FC<LoginProps> = () => {
       signInWithEmailAndPassword(auth, loginObj.emailId, loginObj.password)
         .then(async (userCredential) => {
           const user = userCredential.user;
-          localStorage.setItem("token", JSON.stringify(user));
+          const data: User = {
+            uid: user.uid,
+            email: user.email ?? "",
+            emailVerified: user.emailVerified,
+            isAnonymous: user.isAnonymous,
+            displayName: user.displayName ?? "",
+          };
+          localStorage.setItem("token", JSON.stringify(data));
           showToast("Login Success");
           setLoading(false);
           navitage("/");

@@ -3,14 +3,13 @@ import React, { useEffect, useState } from "react";
 import MainLayout from "../../component/Layouts/MainLayout";
 import { db } from "../../firebase";
 import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
-import FaskesData from "../../interface/fasker_interface";
-import EditModal from "./modal_edit";
 import AddModal from "./modal_add";
-import ShowModal from "./modal_show";
 import { Modal } from "react-bootstrap";
 import ApproveModal from "../../component/Modal/CustomModalConfirmation";
 import showToast from "../../component/Toast/toast";
 import HealthData from "../../interface/health_interface";
+import EditHealthModal from "./modal_edit";
+import ShowHealthModal from "./modal_show";
 
 const FacilityHealth: React.FC = () => {
   const [id, setId] = useState("");
@@ -20,7 +19,28 @@ const FacilityHealth: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [editItemId, setEditItemId] = useState<HealthData | null>(null);
+  const [showDelete, setShowDelete] = useState(false);
+  const [itemId, setItemId] = useState("");
 
+  const handleShowDelete = (id: string) => {
+    setItemId(id);
+    setShowDelete(true);
+  };
+  const handleCloseDelete = () => {
+    setItemId("");
+    setShowDelete(false);
+  };
+  const handleSubmit = async () => {
+    try {
+      const faskesDocRef = doc(db, "healths", itemId);
+      await deleteDoc(faskesDocRef);
+      showToast("Data berhasil dihapus");
+      setShowDelete(false);
+    } catch (error) {
+      setShowDelete(false);
+      console.error("Error deleting document:");
+    }
+  };
   const handleEditClick = async (itemId: HealthData) => {
     setEditItemId(itemId);
     setShowEditModal(true);
@@ -48,12 +68,10 @@ const FacilityHealth: React.FC = () => {
         const unsubscribe = onSnapshot(healthCollection, (snapshot) => {
           const health: HealthData[] = snapshot.docs.map((doc) => {
             const data = doc.data();
-
             return {
               id: doc.id,
               alamat_laporan: data.alamat_laporan,
               created_at: data.created_at,
-
               institusi_pelapor: data.institusi_pelapor,
               keluhan: data.keluhan,
               latitude: data.latitude,
@@ -86,7 +104,7 @@ const FacilityHealth: React.FC = () => {
   const SearchUser = (name: string) => {
     if (name !== "") {
       const filterFaskes = healthData.filter((user) =>
-        user.nama_pelapor.toLowerCase().includes(name.toLowerCase())
+        user.nama_pelapor!.toLowerCase().includes(name.toLowerCase())
       );
       sethealthData(filterFaskes);
     } else {
@@ -100,7 +118,7 @@ const FacilityHealth: React.FC = () => {
           <div className="card">
             <div className="card-body">
               <div className="d-flex justify-content-between">
-                <h4 className="card-title">Fasilitas Kesehatan</h4>
+                <h4 className="card-title">Laporan Kesehatan</h4>
               </div>
               <div className="mb-3">
                 <input
@@ -155,6 +173,12 @@ const FacilityHealth: React.FC = () => {
                             >
                               Sunting
                             </button>
+                            <button
+                              className="btn-outline-danger font-weight-bold"
+                              onClick={() => handleShowDelete(item.id || "")}
+                            >
+                              Hapus
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -168,58 +192,61 @@ const FacilityHealth: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* <Modal className="add" show={showAddModal} onHide={handleEditModalClose}>
+      <ApproveModal
+        show={showDelete}
+        handleClose={handleCloseDelete}
+        handleCloseApprove={handleCloseDelete}
+        onSubmitApprove={handleSubmit}
+        message={"Apakah anda yakin ingin menghapus data ini?"}
+      />
+      <Modal className="add" show={showAddModal} onHide={handleEditModalClose}>
         <Modal.Header closeButton>
           <Modal.Title className="text-center">
-            <h3>Tambah Fasilitas Kesehatan</h3>
+            <h3>Tambah Data</h3>
           </Modal.Title>
         </Modal.Header>
-        <AddModal
-          show={showAddModal}
-          onHide={handleEditModalClose}
-          faskedData={editItemId!}
-        />
+        <AddModal show={showAddModal} onHide={handleEditModalClose} />
       </Modal>
-      <Modal
-        className="edit"
-        show={showEditModal}
-        onHide={handleEditModalClose}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title className="text-center">
-            <h3>Sunting Data</h3>
-          </Modal.Title>
-        </Modal.Header>
-        <EditModal
+      {editItemId != null ? (
+        <Modal
+          className="edit"
           show={showEditModal}
           onHide={handleEditModalClose}
-          faskedData={editItemId!}
-        />
-      </Modal>
-      <Modal
-        className="edit"
-        show={showViewModal}
-        onHide={handleEditModalClose}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title className="text-center">
-            <h3>Fasilitas Kesehatan</h3>
-          </Modal.Title>
-        </Modal.Header>
-        <ShowModal
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-center">
+              <h3>Sunting Data</h3>
+            </Modal.Title>
+          </Modal.Header>
+          <EditHealthModal
+            show={showAddModal}
+            onHide={handleEditModalClose}
+            formData={editItemId!}
+          />
+        </Modal>
+      ) : (
+        <></>
+      )}
+      {editItemId != null ? (
+        <Modal
+          className="show"
           show={showViewModal}
           onHide={handleEditModalClose}
-          faskedData={editItemId!}
-        />
-      </Modal>
-      <ApproveModal
-        show={showApproveModal}
-        handleClose={handleCloseApprove}
-        handleCloseApprove={handleCloseApprove}
-        onSubmitApprove={onSubmitApprove}
-        message={"Apakah anda yakin ingin menghapus data ini?"}
-      /> */}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-center">
+              <h3>Laporan Kesehatan</h3>
+            </Modal.Title>
+          </Modal.Header>
+          <ShowHealthModal
+            show={showViewModal}
+            onHide={handleEditModalClose}
+            formData={editItemId!}
+          />
+        </Modal>
+      ) : (
+        <></>
+      )}
     </MainLayout>
   );
 };

@@ -1,18 +1,23 @@
 /* eslint-disable eqeqeq */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MainLayout from "../../component/Layouts/MainLayout";
 import { db } from "../../firebase";
 import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
 import UserData from "../../interface/users_interface";
 import ApproveModal from "../../component/Modal/CustomModalConfirmation";
 import showToast from "../../component/Toast/toast";
+import { Button, Modal } from "react-bootstrap";
+import AddModalUserInfo from "./modal_adds";
+import ImportModal from "../../component/Modal/importModal";
 
 const UsersActive: React.FC = () => {
   const [usersData, setUsersData] = useState<UserData[]>([]);
   const [usersFilterData, setUsersFilterData] = useState<UserData[]>([]);
   const [idUser, setidUser] = useState("");
-  const [showDelete, setShowDelete] = useState(false);
 
+  const [showModalImport, setShowModalImport] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const handleShowDelete = (id: string) => {
     setidUser(id);
     setShowDelete(true);
@@ -32,6 +37,17 @@ const UsersActive: React.FC = () => {
       console.error("Error deleting document:");
     }
   };
+  const handleShowModalImport = () => {
+    setShowModalImport(true);
+  };
+  const handleCloseModalImport = () => {
+    setShowModalImport(false);
+  };
+
+  const handleCloseAddModal = () => {
+    setShowAddModal(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,7 +57,7 @@ const UsersActive: React.FC = () => {
         // Listen for changes in the "users" collection
         onSnapshot(userCollection, (snapshot) => {
           const userData: UserData[] = snapshot.docs
-            .filter((doc) => doc.data().status_aktivasi === "ACTIVE")
+            .filter((doc) => doc.data().status_aktivasi !== "ACTIVE")
             .map((doc) => {
               const data = doc.data();
               return {
@@ -84,7 +100,7 @@ const UsersActive: React.FC = () => {
   const SearchUser = (name: string) => {
     if (name !== "") {
       const filteredUsers = usersFilterData.filter((user) =>
-        user.nama_lengkap.toLowerCase().includes(name.toLowerCase())
+        user.nama_lengkap!.toLowerCase().includes(name.toLowerCase())
       );
       setUsersData(filteredUsers);
     } else {
@@ -92,13 +108,16 @@ const UsersActive: React.FC = () => {
     }
   };
   return (
-    <MainLayout>
+    <MainLayout title="User Aktif">
       <div className="row">
         <div className="col-md-12 grid-margin">
           <div className="card">
             <div className="card-body">
               <div className="d-flex justify-content-between">
                 <h4 className="card-title">User Aktif</h4>
+                <div>
+                  <h1 className="mb-2">Import Excel</h1>
+                </div>
               </div>
               <div className="mb-3">
                 <input
@@ -106,12 +125,23 @@ const UsersActive: React.FC = () => {
                   placeholder="Search by name..."
                   onChange={(e) => SearchUser(e.target.value)}
                 />
-                <div className="float-right">
-                  <button className="btn btn-primary btn-icon-text">
-                    <i className="ti-plus btn-icon-prepend"></i>Tambah Data{" "}
+                <div className="row float-right">
+                  <Button
+                    variant="success"
+                    className="bg-success mr-2"
+                    onClick={handleShowModalImport}
+                  >
+                    Import Excel
+                  </Button>
+                  <button
+                    className="btn btn-primary btn-icon-text"
+                    onClick={() => setShowAddModal(true)}
+                  >
+                    <i className="ti-plus btn-icon-prepend"></i>Tambah Data
                   </button>
                 </div>
               </div>
+
               {usersData.length > 0 ? (
                 <div className="table-responsive">
                   <table className="table datatables">
@@ -156,7 +186,7 @@ const UsersActive: React.FC = () => {
                             </button>
                             <button
                               className="btn-outline-danger font-weight-bold"
-                              onClick={() => handleShowDelete(user.id)}
+                              onClick={() => handleShowDelete(user.id || "")}
                             >
                               Hapus
                             </button>
@@ -165,6 +195,7 @@ const UsersActive: React.FC = () => {
                       ))}
                     </tbody>
                   </table>
+
                   <ApproveModal
                     show={showDelete}
                     handleClose={handleCloseDelete}
@@ -176,6 +207,25 @@ const UsersActive: React.FC = () => {
               ) : (
                 <div className="text-center">Data tidak tersedia</div>
               )}
+              <Modal
+                className="add"
+                show={showAddModal}
+                onHide={handleCloseAddModal}
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-center">
+                    <h3>Tambah Data</h3>
+                  </Modal.Title>
+                </Modal.Header>
+                <AddModalUserInfo
+                  show={showAddModal}
+                  onHide={handleCloseAddModal}
+                />
+              </Modal>
+              <ImportModal
+                show={showModalImport}
+                onClose={handleCloseModalImport}
+              />
             </div>
           </div>
         </div>

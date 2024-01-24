@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import InputText from "../../component/Input/inputText";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -6,14 +6,19 @@ import showToast from "../../component/Toast/toast";
 import { Button, ModalBody } from "react-bootstrap";
 import HealthInfoData from "../../interface/health_info_interface";
 import JoditEditor from "jodit-react";
+import User from "../../interface/auth_interface";
+import moment from "moment";
+
 interface AddModalHealthInfoProps {
   show: boolean;
   onHide: () => void;
+  user?: User;
 }
 
 function AddModalHealthInfo(props: AddModalHealthInfoProps) {
   const editor = useRef(null);
   const [loading, setLoading] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState<HealthInfoData>({
     deskripsi: "",
@@ -26,17 +31,28 @@ function AddModalHealthInfo(props: AddModalHealthInfoProps) {
     tanggal_dibuat: "",
     waktu_dibuat: "",
   });
-  const [selectedImage, setSelectedImage] = useState(null);
+
+  useEffect(() => {
+    if (props.user)
+      setFormData({
+        ...formData,
+        publisher_user_id: props.user.uid ?? "",
+        tanggal_dibuat: moment(new Date()).format("DD-MM-YYYY").toString(),
+        waktu_dibuat: moment(new Date()).format("HH:mm:ss").toString(),
+        penulis: props.user.displayName ?? "",
+      });
+    console.log(formData);
+  }, [props.user]);
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
 
     if (file) {
       const reader = new FileReader();
-
       reader.onloadend = () => {
         setFormData({ ...formData, foto: reader.result?.toString() || "" });
       };
+      console.log(formData.foto);
 
       reader.readAsDataURL(file);
     }
@@ -70,8 +86,6 @@ function AddModalHealthInfo(props: AddModalHealthInfoProps) {
     } else {
       try {
         setLoading(true);
-        const storedUserString = localStorage.getItem("token");
-        console.log(storedUserString);
         const faskesDocRef = collection(db, "healthInfo");
         const currentDate = new Date();
         const id = currentDate.getTime();
@@ -110,10 +124,11 @@ function AddModalHealthInfo(props: AddModalHealthInfoProps) {
     <ModalBody>
       <form>
         <InputText
-          type="date"
-          defaultValue={formData.tanggal_dibuat}
+          type="text"
+          defaultValue={`${formData.tanggal_dibuat} ${formData.waktu_dibuat}`}
           updateType="tanggal_dibuat"
           containerStyle="mt-4"
+          // readonly={formData.tanggal_dibuat !== "" ? true : false}
           labelTitle="Tanggal Rilis"
           errorMessage={errorMessage}
           updateFormValue={updateFormValue}
@@ -122,6 +137,7 @@ function AddModalHealthInfo(props: AddModalHealthInfoProps) {
           defaultValue={formData.penulis}
           type="text"
           updateType="penulis"
+          readonly={formData.penulis !== "" ? true : false}
           containerStyle="mt-4"
           labelTitle="Penulis"
           errorMessage={errorMessage}
@@ -132,7 +148,7 @@ function AddModalHealthInfo(props: AddModalHealthInfoProps) {
           type="text"
           updateType="institusi"
           containerStyle="mt-4"
-          labelTitle="Alamat"
+          labelTitle="Institusi"
           errorMessage={errorMessage}
           updateFormValue={updateFormValue}
         />
@@ -157,7 +173,11 @@ function AddModalHealthInfo(props: AddModalHealthInfoProps) {
             <img
               src={formData.foto}
               alt="Selected"
-              style={{ maxWidth: "100%", maxHeight: "200px" }}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "200px",
+                position: "relative",
+              }}
             />
           ) : (
             <div
@@ -167,7 +187,7 @@ function AddModalHealthInfo(props: AddModalHealthInfoProps) {
                 textAlign: "center",
               }}
             >
-              <p>Click to select an image</p>
+              <p>Pilih Gambar</p>
             </div>
           )}
         </label>

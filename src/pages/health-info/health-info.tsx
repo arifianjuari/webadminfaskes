@@ -10,6 +10,7 @@ import ApproveModal from "../../component/Modal/CustomModalConfirmation";
 import showToast from "../../component/Toast/toast";
 import HealthInfoData from "../../interface/health_info_interface";
 import AddModalHealthInfo from "./modal_adds";
+import User from "../../interface/auth_interface";
 
 const HealthInfo: React.FC = () => {
   const [id, setId] = useState("");
@@ -17,6 +18,7 @@ const HealthInfo: React.FC = () => {
   const [healFilterData, setHealthInfoFilterData] = useState<HealthInfoData[]>(
     []
   );
+  const [userInfo, setUserInfo] = useState<User | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -36,9 +38,11 @@ const HealthInfo: React.FC = () => {
   const onSubmitApprove = async () => {
     try {
       const faskesDocRef = doc(db, "healthInfo", id);
-      await deleteDoc(faskesDocRef);
-      setShowApproveModal(false);
-      showToast("Data berhasil dihapus");
+      console.log(id);
+      await deleteDoc(faskesDocRef).then((value) => {
+        setShowApproveModal(false);
+        showToast("Data berhasil dihapus");
+      });
     } catch (error) {
       setShowApproveModal(false);
       console.error("Error deleting document:");
@@ -71,7 +75,6 @@ const HealthInfo: React.FC = () => {
         const unsubscribe = onSnapshot(faskesCollection, (snapshot) => {
           const healthInfo: HealthInfoData[] = snapshot.docs.map((doc) => {
             const data = doc.data();
-
             return {
               deskripsi: data.deskripsi,
               foto: data.foto,
@@ -94,7 +97,14 @@ const HealthInfo: React.FC = () => {
         console.error("Error fetching data:", error);
       }
     };
-
+    const getUserInfo = async () => {
+      const user = localStorage.getItem("token");
+      if (user) {
+        setUserInfo(JSON.parse(user));
+        console.log(userInfo);
+      }
+    };
+    getUserInfo();
     fetchData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,7 +163,9 @@ const HealthInfo: React.FC = () => {
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{`${item.tanggal_dibuat} ${item.waktu_dibuat}`}</td>
-                          <td>{item.judul}</td>
+                          <td
+                            dangerouslySetInnerHTML={{ __html: item.judul }}
+                          />
                           <td>{item.deskripsi}</td>
                           <td>{item.penulis}</td>
                           {/* <td>{item.}</td> */}
@@ -196,7 +208,11 @@ const HealthInfo: React.FC = () => {
             <h3>Tambah Fasilitas Kesehatan</h3>
           </Modal.Title>
         </Modal.Header>
-        <AddModalHealthInfo show={showAddModal} onHide={handleEditModalClose} />
+        <AddModalHealthInfo
+          show={showAddModal}
+          onHide={handleEditModalClose}
+          user={userInfo!}
+        />
       </Modal>
       <Modal
         className="edit"

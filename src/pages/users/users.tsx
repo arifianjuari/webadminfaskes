@@ -52,7 +52,7 @@ const Users: React.FC = () => {
     })
       .then(() => {
         showToast("Berhasil Direject");
-        handleCloseApprove();
+        handleClose();
       })
       .catch((error) => {
         // The document probably doesn't exist.
@@ -116,7 +116,7 @@ const Users: React.FC = () => {
   const SearchUser = (name: string) => {
     if (name !== "") {
       const filteredUsers = usersFilterData.filter((user) =>
-        user.nama_lengkap.toLowerCase().includes(name.toLowerCase())
+        user.nama_lengkap!.toLowerCase().includes(name.toLowerCase())
       );
       setUsersData(filteredUsers);
     } else {
@@ -177,13 +177,13 @@ const Users: React.FC = () => {
                           <td>
                             <button
                               className="btn-outline-primary mr-2 font-weight-bold"
-                              onClick={() => handleApprove(user.id)}
+                              onClick={() => handleApprove(user.id ?? "")}
                             >
                               Approve
                             </button>
                             <button
                               className="btn-outline-danger font-weight-bold"
-                              onClick={() => handleShow(user.id)}
+                              onClick={() => handleShow(user.id ?? "")}
                             >
                               Reject
                             </button>

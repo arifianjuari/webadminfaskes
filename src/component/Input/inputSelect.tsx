@@ -1,9 +1,8 @@
 import React, { useState, ChangeEvent } from "react";
 import Form from "react-bootstrap/Form";
-import ErrorText from "../Typography/ErrorText";
-import { Row } from "react-bootstrap";
+import ItemValueData from "../../interface/item_value";
 
-interface InputTextProps {
+interface InputSelectProps {
   labelTitle: string;
   labelStyle?: string;
   type?: string;
@@ -14,9 +13,10 @@ interface InputTextProps {
   errorMessage?: string;
   updateFormValue: (arg: { updateType: string; value: string }) => void;
   updateType: string;
+  options?: ItemValueData[];
 }
 
-const InputText: React.FC<InputTextProps> = ({
+const InputSelect: React.FC<InputSelectProps> = ({
   labelTitle,
   labelStyle,
   type,
@@ -27,6 +27,7 @@ const InputText: React.FC<InputTextProps> = ({
   updateType,
   readonly,
   errorMessage,
+  options = [],
 }) => {
   const [value, setValue] = useState<string | undefined>(defaultValue);
 
@@ -48,23 +49,32 @@ const InputText: React.FC<InputTextProps> = ({
       <Form.Control
         id={labelTitle}
         type={type || "text"}
+        as="select"
         value={value || ""}
-        readOnly={readonly || false}
-        placeholder={placeholder || ""}
+        className="text-base-content form-select-md"
         onChange={(e: ChangeEvent<HTMLInputElement>) =>
           updateInputValue(e.target.value)
         }
-        className="form-control-xs"
-      />
-      {errorMessage && errorMessage.includes(labelTitle!) ? (
-        <Row className="ml-1">
-          <ErrorText styleClass="mt-2 text-red-500 text-xs content-start">
-            {errorMessage}
-          </ErrorText>
-        </Row>
+        style={{ width: "210px" }}
+      >
+        <option value="" disabled>
+          {placeholder || "Silahkan Pilih"}
+        </option>
+        {options.map((option) => (
+          <option
+            key={option.value}
+            value={option.value}
+            selected={value === option.value}
+          >
+            {option.label}
+          </option>
+        ))}
+      </Form.Control>
+      {errorMessage && errorMessage.includes(value!) ? (
+        <Form.Text className="invalid-feedback">{errorMessage}</Form.Text>
       ) : null}
     </Form.Group>
   );
 };
 
-export default InputText;
+export default InputSelect;

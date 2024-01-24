@@ -1,7 +1,7 @@
 import HomeIcon from "../assets/icons/home.svg";
 import UsersIcon from "../assets/icons/users.svg";
 import FolderIcon from "../assets/icons/folders.svg";
-import HealthIcon from "../assets/icons/health-shield.svg";
+import HealthIcon from "../assets/icons/building-hospital.svg";
 import HealthShieldIcon from "../assets/icons/health-shield.svg";
 
 interface SubmenuType {

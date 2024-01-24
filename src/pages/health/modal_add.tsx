@@ -6,56 +6,69 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebase";
 import showToast from "../../component/Toast/toast";
 import { Button, ModalBody } from "react-bootstrap";
+import HealthData from "../../interface/health_interface";
+import moment from "moment";
 
 interface AddModalProps {
   show: boolean;
   onHide: () => void;
-  faskedData?: FaskesData;
 }
 
 function AddModal(props: AddModalProps) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [formData, setFormData] = useState<FaskesData>({
+  const [formData, setFormData] = useState<HealthData>({
     id: "",
-    alamat_faskes: "",
+    alamat_laporan: "",
     created_at: 0,
-    deskripsi_faskes: "",
-    foto_faskes: "",
-    kategori_faskes: "",
+    institusi_pelapor: "",
+    keluhan: "",
     latitude: 0,
     longitude: 0,
-    nama_faskes: "",
-    nama_petugas: "",
-    nomor_whatsapp_faskes: "",
+    nama_pasien: "",
+    nama_pelapor: "",
+    nomor_telepon_pelapor: "",
+    pemberi_bantuan: [],
+    skala_sakit: "",
+    status: "",
+    waktu_laporan: "",
   });
 
   const submitForm = async () => {
     setErrorMessage("");
-    if (formData.nama_faskes?.trim() === "")
-      return setErrorMessage("Nama Fasilitas is required");
-    if (formData.kategori_faskes?.trim() === "")
-      return setErrorMessage("kategori Fasilitas is required");
-    if (formData.alamat_faskes?.trim() === "") {
-      return setErrorMessage("alamat Fasilitas is required");
-    }
-    if (formData.nomor_whatsapp_faskes?.trim() === "") {
-      return setErrorMessage("nomor Fasilitas is required");
-    } else {
+    if (formData.nama_pelapor.trim() === "")
+      return setErrorMessage("Nama Pembuat Laporan tidak boleh kosong");
+    if (formData.institusi_pelapor?.trim() === "")
+      return setErrorMessage("Institusi tidak boleh kosong");
+    if (formData.nama_pasien?.trim() === "")
+      return setErrorMessage("Nama Petugas tidak boleh kosong");
+    if (formData.alamat_laporan?.trim() === "")
+      return setErrorMessage("Alamat Lokasi tidak boleh kosong");
+    if (formData.keluhan?.trim() === "")
+      return setErrorMessage("Keluhan tidak boleh kosong");
+    if (formData.waktu_laporan?.trim() === "")
+      return setErrorMessage("Waktu Lapor tidak boleh kosong");
+    if (formData.skala_sakit?.trim() === "")
+      return setErrorMessage("Skala Sakit tidak boleh kosong");
+    else {
       try {
+        console.log(formData);
         setLoading(true);
-        const faskesDocRef = collection(db, "faskes");
+        const faskesDocRef = collection(db, "healths");
         await addDoc(faskesDocRef, {
-          alamat_faskes: formData.alamat_faskes,
-          kategori_faskes: formData.kategori_faskes,
-          nama_faskes: formData.nama_faskes,
-          nomor_whatsapp_faskes: formData.nomor_whatsapp_faskes,
+          alamat_laporan: formData.alamat_laporan,
           created_at: serverTimestamp(),
-          deskripsi_faskes: "",
-          foto_faskes: "",
+          institusi_pelapor: formData.institusi_pelapor,
+          keluhan: formData.keluhan,
           latitude: 0,
           longitude: 0,
-          nama_petugas: "",
+          nama_pasien: formData.nama_pasien,
+          nama_pelapor: formData.nama_pelapor,
+          nomor_telepon_pelapor: "",
+          pemberi_bantuan: [],
+          skala_sakit: formData.skala_sakit,
+          status: "",
+          waktu_laporan: moment(formData.waktu_laporan).toISOString(),
         });
         showToast("Data Berhasil Ditambahkan");
         setLoading(false);
@@ -82,36 +95,67 @@ function AddModal(props: AddModalProps) {
       <form>
         <InputText
           type="text"
-          defaultValue={formData.nama_faskes}
-          updateType="nama_faskes"
+          defaultValue={formData?.nama_pelapor}
+          updateType="nama_pelapor"
           containerStyle="mt-4"
-          labelTitle="Nama Fasilitas Kesehatan"
+          errorMessage={errorMessage}
+          labelTitle="Nama Pembuat Laporan"
           updateFormValue={updateFormValue}
         />
 
         <InputText
-          defaultValue={formData.kategori_faskes}
+          defaultValue={formData?.institusi_pelapor}
           type="text"
-          updateType="kategori_faskes"
+          updateType="institusi_pelapor"
+          errorMessage={errorMessage}
           containerStyle="mt-4"
-          labelTitle="Tipe Fasilitas Kesehatan"
+          labelTitle="Institusi"
           updateFormValue={updateFormValue}
         />
 
         <InputText
-          defaultValue={formData.alamat_faskes}
+          defaultValue={formData?.nama_pasien}
           type="text"
-          updateType="alamat_faskes"
+          updateType="nama_pasien"
           containerStyle="mt-4"
-          labelTitle="Alamat"
+          errorMessage={errorMessage}
+          labelTitle="Nama Petugas"
           updateFormValue={updateFormValue}
         />
         <InputText
-          defaultValue={formData.nomor_whatsapp_faskes}
+          defaultValue={formData?.alamat_laporan}
           type="text"
-          updateType="nomor_whatsapp_faskes"
+          updateType="alamat_laporan"
           containerStyle="mt-4"
-          labelTitle="Nomor Whatsapp"
+          errorMessage={errorMessage}
+          labelTitle="Alamat Lokasi"
+          updateFormValue={updateFormValue}
+        />
+        <InputText
+          defaultValue={formData?.keluhan}
+          type="text"
+          updateType="keluhan"
+          containerStyle="mt-4"
+          errorMessage={errorMessage}
+          labelTitle="Keluhan"
+          updateFormValue={updateFormValue}
+        />
+        <InputText
+          defaultValue={formData?.waktu_laporan}
+          type="date"
+          updateType="waktu_laporan"
+          containerStyle="mt-4"
+          errorMessage={errorMessage}
+          labelTitle="Waktu Lapor"
+          updateFormValue={updateFormValue}
+        />
+        <InputText
+          defaultValue={formData?.skala_sakit}
+          type="number"
+          updateType="skala_sakit"
+          containerStyle="mt-4"
+          errorMessage={errorMessage}
+          labelTitle="Skala Sakit"
           updateFormValue={updateFormValue}
         />
         <ErrorText styleClass="mt-8">{errorMessage}</ErrorText>

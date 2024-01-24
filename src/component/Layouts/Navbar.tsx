@@ -120,7 +120,7 @@ const Navbar: React.FC = () => {
             type="button"
             data-toggle="offcanvas"
           >
-            {/* <span className="icon-menu"></span> */}
+            <span className="icon-menu"></span>
           </button>
         </div>
       </nav>

@@ -19,15 +19,12 @@ function SidebarSubmenu({
 }: SidebarSubmenuProps) {
   const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
-
-  /** Open Submenu list if path found in routes, this is for directly loading submenu routes first time */
   useEffect(() => {
     if (
       submenu &&
       submenu.length > 0 &&
       submenu.some((m) => m.path === location.pathname)
     ) {
-      console.log(location.pathname);
       setIsExpanded(true);
     }
   }, [location.pathname, submenu]);
